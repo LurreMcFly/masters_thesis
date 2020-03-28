@@ -5,7 +5,7 @@ My master’s thesis, currently in progress. Written as a part of the Master of 
 
 
 Example of anomaly detection system at work
-![train](gifs/train.gif)
+![train](figures/train.gif)
 
 __GIF explanation__
 __Top figure__
