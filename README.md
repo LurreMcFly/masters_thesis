@@ -13,10 +13,10 @@ Most algorithms for anomaly detection try to model some probability density func
 
 To summarise we want to leverage that different ensemble members have different characteristics which makes them more or less suitable to make predictions for certain instances. We weight the ensemble members by a neural network, taking the instance as input to weight the ensemble members in accordance to their capacity to make a prediction for certain instances. This could be leveraged even further, having different ensemble members trained on different parts of the feature space. The loss to train the neural network is composed of two parts, the first a supervised part _loss{active}_, using the labels provided by a human expert, and a second part _loss{prior}_ which places a uniform prior on the ensemble members. When new labels are provided the meta learner is updated to don't miss classify any of the labeled instances.  
 
-Example of anomaly detection system at work (as of 2020-03-28)
+## Example of anomaly detection system at work (as of 2020-03-28)
 ![train](figures/train.gif)
 
-__GIF explanation__
+### GIF explanation__
 __Top figure__
 - __Blue line__: Time-series from Yahoo Webscope benchmark data set.
 - __Red x__: True anomalies
