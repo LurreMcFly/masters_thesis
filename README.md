@@ -16,7 +16,7 @@ To summarise we want to leverage that different ensemble members have different 
 ## Example of anomaly detection system at work (as of 2020-03-28)
 ![train](figures/train.gif)
 
-### GIF explanation__
+### GIF explanation
 __Top figure__
 - __Blue line__: Time-series from Yahoo Webscope benchmark data set.
 - __Red x__: True anomalies
@@ -24,6 +24,7 @@ __Top figure__
 - __Red line _(100 data points)___: When querying label {anomaly, normal} the oldest 20% in ensamble is updated and trained on this red sliding window, i.e. the 100 most recent data points.
 - __Green points__: Queries to human expert
 - __Yellow points__: Predicted anomalies
+
 __Bottom figure__
 - __Purple line__: Anomaly score
 - __Red line__: Threshold = 0.5
