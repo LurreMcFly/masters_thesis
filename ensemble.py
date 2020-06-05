@@ -210,14 +210,11 @@ class Ensemble_LinearRegression(Ensemble):
                 for impute_idx in impute_idxs:
                     np.fill_diagonal(X_imputed[impute_idx:], X_imputed[impute_idx - 1, 0])
                 
-                X_window = X_imputed[:, :window_size]
+                x_window = X_imputed[:, :window_size]
             else:
-                X_window = X[:, :window_size]
+                x_window = X[:, :window_size]
             
-            model.fit(X_window, y)
-            
-        #ugly way of storing the last max_size training instances for sliding window + prediction
-        #self.last_max_window = X[- self.max_window_size:]
+            model.fit(x_window, y)
     
     def generate_sliding_window(self, X, window_size):
         """
@@ -239,8 +236,8 @@ class Ensemble_LinearRegression(Ensemble):
         predictions = np.empty([len(X), len(self.window_sizes)])
         
         for i, (window_size, model) in enumerate(zip(self.window_sizes, self.LinearRegression_models)):
-            X_window = X[:, :window_size]
-            predictions[:,i] = model.predict(X_window)
+            x_window = X[:, :window_size]
+            predictions[:,i] = model.predict(x_window)
         
         return predictions
     
@@ -251,8 +248,8 @@ class Ensemble_LinearRegression(Ensemble):
         anomaly_scores = np.empty([len(X), len(self.window_sizes)])
         
         for i, (window_size, model) in enumerate(zip(self.window_sizes, self.LinearRegression_models)):
-            X_window = X[:, :window_size]       
-            predictions = model.predict(X_window)
+            x_window = X[:, :window_size]       
+            predictions = model.predict(x_window)
             anomaly_scores[:,i] = np.abs(y - predictions)
         
         return anomaly_scores
@@ -265,7 +262,6 @@ class Ensemble_LinearRegression(Ensemble):
             idx = int(i)
             ensemble_model = self.ensemble_models[idx]
             if isinstance(ensemble_model, LinearRegression):
-                self.ensemble_models[idx] = LinearRegression(**kwargs)
                 window_size = self.window_sizes[idx]
                 
                 if mean_impute_rate:
@@ -273,8 +269,8 @@ class Ensemble_LinearRegression(Ensemble):
                     X_imputed = X.copy()
                     for impute_idx in impute_idxs:
                         np.fill_diagonal(X_imputed[impute_idx:], X_imputed[impute_idx - 1, 0])
-                    X_window = X_imputed[:, :window_size]
+                    x_window = X_imputed[:,  -window_size:]
                 else:
-                    X_window = X[:, :window_size]                
+                    x_window = X[:, -window_size:]                
                 
-                self.ensemble_models[idx].fit(X_window, y)
+                self.ensemble_models[idx].fit(x_window, y)

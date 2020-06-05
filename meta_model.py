@@ -53,7 +53,7 @@ class FSSN_softmax(nn.Module):
         self.out = Suppression_Layer(max(n_nodes, 3*n_ensemble), n_ensemble)
         
     def forward(self, x):
-        x = torch.sigmoid(self.sup1(x))
+        x = F.sigmoid(self.sup1(x))
         x = F.softmax(self.out(x), dim=1)
         
         return x
@@ -80,7 +80,7 @@ class FSSN(nn.Module):
         self.out = Suppression_Layer(max(n_nodes, 3*n_ensemble), n_ensemble)
         
     def forward(self, x):
-        x = torch.sigmoid(self.sup1(x))
+        x = F.sigmoid(self.sup1(x))
         x = F.sigmoid(self.out(x))
         
         return x

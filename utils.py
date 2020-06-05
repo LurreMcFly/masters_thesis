@@ -103,7 +103,7 @@ def load_data_yahoo(num, return_file_path=False):
     print(file_path)
 
     df = pd.read_csv(file_path)
-    #df['timestamp'] = pd.to_datetime(df['timestamp'])
+
     if 'is_anomaly' == df.columns[-1]:
         df['is_anomaly'].replace(to_replace=0, value=-1, inplace=True)
     else:

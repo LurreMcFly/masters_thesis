@@ -26,7 +26,7 @@ class AAD():
         self.mean_impute_rate = None
         
         self.threshold = threshold
-        self.query_frequency = query_frequency
+        self.query_frequency = 1 - query_frequency
         
         self.targets_to_keep = targets_to_keep
         self.ensemble_update_counter = 0
@@ -83,7 +83,7 @@ class AAD():
             anomaly_scores_evaluation = np.concatenate((anomaly_scores_evaluation, anomaly_score))
             
             #Condition to querry
-            if anomaly_score > self.threshold * self.query_frequency and anomaly_score/prev_anomaly_score > 1/(self.threshold * self.query_frequency):
+            if anomaly_score > self.threshold * self.query_frequency and anomaly_score != prev_anomaly_score:
                 anomalous_idx = i + window_size - 1
                 y_pred = 1 if anomaly_score > self.threshold else -1
                 predicted_anomalies[anomalous_idx] = y_pred
@@ -95,7 +95,12 @@ class AAD():
                 #Remove old targets
                 if len(self.targets) > self.targets_to_keep:
                     key_to_delete = min(self.targets)
-                    del self.targets[key_to_delete]                
+                    del self.targets[key_to_delete]
+                
+                #Updated ensemble if stuck in query mode dont know if really needed
+                if list(self.targets.keys()) == list(range(min(self.targets), min(self.targets) + self.targets_to_keep)) and y_pred == -1:
+                    self.update_ensemble(X_window, y_window, update_prop=update_prop, mean_impute_rate=mean_impute_rate)
+                    self.ensemble_update_counter += 1
                 
                 #If wrong prediction -> update ensemble and meta model
                 #If right prediction -> update meta model with correct_pred = True
@@ -168,7 +173,7 @@ class AAD():
         for i in range(1, num_steps + 1):
             start_window, end_window = i - window_size, i
             
-            #Current training window
+            #Current training window§
             if start_window < 0:
                 X_window = np.concatenate([self.last_X_window[end_window:], X[:end_window]])
                 y_window = np.concatenate([self.last_y_window[end_window:], y[:end_window]])
@@ -184,7 +189,7 @@ class AAD():
             anomaly_scores_evaluation = np.concatenate((anomaly_scores_evaluation, anomaly_score))
 
             #Condition to querry
-            if anomaly_score > self.threshold*self.query_frequency and anomaly_score/prev_anomaly_score > 1/(self.threshold*self.query_frequency):
+            if anomaly_score > self.threshold*self.query_frequency and anomaly_score != prev_anomaly_score: 
                 anomalous_idx = i - 1
                 y_pred = 1 if anomaly_score > self.threshold else -1
                 predicted_anomalies[anomalous_idx] = y_pred
@@ -192,12 +197,18 @@ class AAD():
                 #Get the real label and store in targets
                 y_real = y_anomalies[anomalous_idx]
                 self.targets[anomalous_idx] = y_real
+                
 
                 #Remove old targets
                 if len(self.targets) > self.targets_to_keep:
                     key_to_delete = min(self.targets)
                     del self.targets[key_to_delete]
-                
+                    
+                #Updated ensemble if stuck in query mode dont know if really needed
+                if list(self.targets.keys()) == list(range(min(self.targets), min(self.targets) + self.targets_to_keep)) and y_pred == -1:
+                    self.update_ensemble(X_window, y_window, update_prop=update_prop, mean_impute_rate=mean_impute_rate)
+                    self.ensemble_update_counter += 1
+                    
                 #If wrong prediction -> update ensemble and meta model
                 #If right prediction -> update meta model with correct_pred = True
                 if y_real != y_pred:
@@ -374,6 +385,7 @@ class AAD():
         #Run 10 epochs even though all querried labels are corectly classified to cement predictions
         if correct_pred:
             for epoch in range(10):
+            #for epoch in range(1):
                 epoch_loss = 0
                 for i, [inputs, targets] in enumerate(train_dl_targets):
                     # Save ensemble input as numpy

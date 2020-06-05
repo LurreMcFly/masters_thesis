@@ -166,14 +166,11 @@ def plot_training(df, x=None, idxs=None, y_preds=None, anomaly_scores_evaluation
         hlines : tuple (threshold for anoamlay, threshold for querry)
     """
     plt.figure(figsize=(16,9))
-    #fig, ax = plt.subplots(figsize=(16,6))
     ax = plt.subplot2grid((16,6), (0,0), rowspan=6, colspan=16)
     ax2 = plt.subplot2grid((16,3), (7,0), rowspan=3, colspan=16, sharex=ax)
     
-    #plt.ylim(-6., 3.)
     df_window = df.iloc[idxs[0]:idxs[1]]
 
-    #y_preds_np = np.where(anomaly_scores > th, 1, -1)
     y_preds_df = df.loc[y_preds==1, ['timestamp', column]]
     anomalies_df = df.loc[df['anomaly'] == 1, ['timestamp', column]]
     
@@ -193,7 +190,7 @@ def plot_training(df, x=None, idxs=None, y_preds=None, anomaly_scores_evaluation
     ax2.plot(df['timestamp'].iloc[:idxs[1]], anomaly_scores_evaluation, color='purple')
     ax2.axhline(y=hlines[0], color='r', linestyle='-')
     ax2.axhline(y=hlines[1], color='g', linestyle='-')
-    ax2.set_ylim(0, 4.)
+    ax2.set_title('Anomaly Score')
     
     ax.legend(['Training Series', 'Current training', 'Sliding Window', 'Ture anomaly', 'Predicted anomaly', 'Queries'])
     if update:
@@ -222,17 +219,14 @@ def plot_predictions(df, x=None, idxs=None, y_preds=None, anomaly_scores_evaluat
         hlines : tuple (threshold for anoamlay, threshold for querry)
     """
     plt.figure(figsize=(16,9))
-    #fig, ax = plt.subplots(figsize=(16,6))
     ax = plt.subplot2grid((16,6), (0,0), rowspan=6, colspan=16)
     ax2 = plt.subplot2grid((16,3), (7,0), rowspan=3, colspan=16, sharex=ax)
     
-    #plt.ylim(-6., 3.)
     if idxs[0] < 0:
         df_window = df.iloc[:idxs[1]]
     else:
         df_window = df.iloc[idxs[0]:idxs[1]]
 
-    #y_preds_np = np.where(anomaly_scores > th, 1, -1)
     y_preds_df = df.loc[y_preds==1, ['timestamp', column]]
     anomalies_df = df.loc[df['anomaly'] == 1, ['timestamp', column]]
     
@@ -252,7 +246,7 @@ def plot_predictions(df, x=None, idxs=None, y_preds=None, anomaly_scores_evaluat
     ax2.plot(df['timestamp'].iloc[:idxs[1]], anomaly_scores_evaluation, color='purple')
     ax2.axhline(y=hlines[0], color='r', linestyle='-')
     ax2.axhline(y=hlines[1], color='g', linestyle='-')
-    ax2.set_ylim(0, 4.)
+    ax2.set_title('Anomaly Score')
     
     ax.legend(['Training Series', 'Current training', 'Sliding Window', 'Ture anomaly', 'Predicted anomaly', 'Queries'])
     if update:
