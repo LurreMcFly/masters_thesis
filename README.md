@@ -16,6 +16,9 @@ To summarise we want to leverage that different ensemble members have different 
 ## Example of anomaly detection system at work (as of 2020-03-28)
 ![train](figures/train.gif)
 
+## Example of anomaly detection system at work (as of 2020-06-05)
+![pred](figures/A1qf01.gif)
+
 ### GIF explanation
 __Top figure__
 - __Blue line__: Time-series from Yahoo Webscope benchmark data set.
